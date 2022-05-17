@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# 自定义不上传的文件
+*.zip
+
 # C extensions
 *.so
 

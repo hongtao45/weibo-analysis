@@ -3,10 +3,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# 自定义的不上传文件
-*.zip
-ENG5005-论文/
-
 # C extensions
 *.so
 

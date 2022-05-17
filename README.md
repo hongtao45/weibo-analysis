@@ -169,15 +169,125 @@
 > - 基于微博数据的高速公路交通事件研究_包丹 【第三章 交通文本分类方法研究
 > - 基于社交网络数据的交通突发事件识别方法_刘昭 【3.2 基于特征权重的特征词选取方法
 > - [基于 TF-IDF 算法的关键词抽取](https://github.com/fxsjy/jieba)
+> - [sklearn中的文本特征提取-英文](https://welts.xyz/2022/03/26/sklearn_text/)
+> - [python文本特征提取词频矩阵](https://blog.csdn.net/weixin_39633781/article/details/112394825)
 
 
+
+- 英文
 
 ```python
+import pandas as pd
+import numpy as np
+from  sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+import jieba
+
+corpus = [
+    "I have a dog.",
+    "You have a dog and a cat.",
+    "He books a book.",
+    "No cost too great.",
+]
+
+# 使用 CountVectorizer
+counter = CountVectorizer() # 先使用默认参数
+counter.fit(corpus)
+X = counter.transform(corpus)
+print(counter.vocabulary_)
+print(X.todense()) # X是一个稀疏矩阵，输出稠密化表示
+df=pd.DataFrame(X.toarray(),columns=counter.get_feature_names_out())
+print(df)
+
+# 使用TfidfVectorizer
+tfidf = TfidfVectorizer() # 先使用默认参数
+X = tfidf.fit_transform(corpus)
+
+df=pd.DataFrame(X.toarray(),columns=tfidf.get_feature_names_out())
+print(df)
+```
+
+- 中文
+
+```python
+import pandas as pd
+import numpy as np
+from  sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+import jieba
+
+data=["移动共享，共享汽车，共享经济，共享单车",
+     "财经栏目，财经政策，经济政策，共享经济"] 
+
+# 需要提前分词
+# 分词
+cut_data=[]
+for s in data:
+    cut_s = jieba.cut(s)
+    l_cut_s=' '.join(list(cut_s))    
+    cut_data.append(l_cut_s)
+    print(l_cut_s)
+    
+# 使用 CountVectorizer
+transfer = CountVectorizer(stop_words=["打算","就是"]) 
+#实例化一个转换器类,
+# # stop_words=["打算","就是"],去除不想要的词
+data_new = transfer.fit_transform(cut_data)  #调用fit_transform()
+print(data_new)
+print(transfer.get_feature_names_out())
+print(data_new.toarray()) 
+#构建成一个二维表：
+df=pd.DataFrame(data_new.toarray(),columns=transfer.get_feature_names_out())
+print(df)   
+
+# TfidfVectorizer
+transfer = TfidfVectorizer() #实例化一个转换器类
+data_new = transfer.fit_transform(cut_data) #调用fit_transform()
+print(data_new)
+print(transfer.get_feature_names_out())
+print(data_new.toarray()) 
+#构建成一个二维表：
+df=pd.DataFrame(data_new.toarray(),columns=transfer.get_feature_names_out())
+print(df)
 ```
 
 
 
-```python
 
-```
+
+## 整合
+
+- pandas 某列都应用吗，某一函数 函数有多参数
+
+  > [给DataFrame的apply调用的函数添加多个参数](https://blog.csdn.net/jewely/article/details/107888098)
+
+  ```python	
+  # 前提：被调用的函数第一个参数必须是DataFrame的行或列
+  
+  df = pd.DataFrame([[1, 2, 3, 4], [5, 6, 7, 8]],
+                    index=list('AB'),
+                    columns=list('abcd'))
+  print(df)
+  '''
+  	a	b	c	d
+  A	1	2	3	4
+  B	5	6	7	8
+  '''
+  
+  def test(x, y, z):
+      return x + y + z
+  print(df.apply(test, args=(10, 100)))
+  '''
+       a    b    c    d
+  A  111  112  113  114
+  B  115  116  117  118
+  '''
+  
+  print(df.apply(test, y=100, z=100))
+  
+  ```
+
+  
+
+- 
 

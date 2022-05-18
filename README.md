@@ -135,6 +135,11 @@
 
 
 
+- df.duplicated('Class',*keep*='last') 直接判断重复
+- df.drop_duplicates('Class')
+- df.drop_duplicates(['School','Class'])
+- df.sample(*n*=3,*weights*=df['Math'])
+
 - 两条文本统一判断
 
   ```python
@@ -308,13 +313,14 @@ print(df)
 - 说明
 
    1. 随机选了500条【每人可以打100条的标签
+   1. df.sample(*n*=3,*weights*=df['Math'])
    2. 最后一步向量化，用了两种编码格式：TDIDF和CountVector，都可以直接用，看看哪个效果好吧（分别以TDIDF和CountVec结尾）【给DY看的
    3. 打标签只需要处理一个文件即可，“完整数据_暴雨_交通_pre_tweets_TFIDF_Label.xlsx”。两个编码格式处理的都是同样的500条数据。标签一次就好，打标签安排：
-
+   
        - TH：0-199
-
+   
        - ZRF：200-299
-
+   
        - CYX：300-399
        - LJK：400-499
    4. 数据说明：相当于属性放在“完整数据_暴雨_交通_pre_tweets_TFIDF.cvx”里面了，数据我们放到excel里面【给DY看的

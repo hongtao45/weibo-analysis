@@ -108,8 +108,8 @@ def main(options):
                                                           ,stopword_list=stopword)  
     # 向量化
     lsls = tweets['clean_stopwords']
-    v_type = options.vecType
-    word_v, withWeight = word2vec(lsls, v_type)
+    vec_type = options.vecType
+    word_v, withWeight = word2vec(lsls, vec_type)
 
     topK = options.topK
     # topK = 500  # 排名前几的
@@ -122,12 +122,12 @@ def main(options):
 
     df2 = word_v.drop(columns=tags_del, axis=1, inplace=False)
     
-    surfix = v_type
+    surfix = vec_type
     pre1 = os.path.join("Data", file[:-4]+"_pre_tweets_"+surfix+".xlsx")
     pre2 = os.path.join("Data",file[:-4]+"_pre_vec_"+surfix+".csv")
     
-    tweets.to_excel(pre1)
-    df2.to_csv(pre2, index=None)
+    # tweets.to_excel(pre1)
+    # df2.to_csv(pre2, index=None)
 
 
 if __name__ == '__main__':

@@ -1,11 +1,30 @@
+from email.policy import default
 import pandas as pd
 import numpy as np
 import re
 import os
 import jieba
 import jieba.analyse
+import  optparse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
+
+
+def get_options(args=None):
+    optParser = optparse.OptionParser()
+    optParser.add_option("-t", "--topK", dest="topK", default=500,
+                        help="")
+    optParser.add_option("-d", "--downK", dest="downK", default=500,
+                        help="重新生成流量")
+    optParser.add_option('-v', '--vec-type', dest='vecType', default="TFIDF" 
+                        , help="向量化的格式:TFIDF或CountVec")
+    optParser.add_option("-n", "--num", dest="num", default=500,
+                        help="随机选取的数量")
+    optParser.add_option("-f", "--file", dest="file", help="指定处理的文件")
+    
+
+    (options, args) = optParser.parse_args(args=args)
+    return options              
 
 ### 1 文本去噪
 #去除一些无用的信息；特殊的符号
@@ -54,15 +73,17 @@ def clean_stopword(str, stopword_list):
 
 ### 7.特征词选择
 # 统一处理和学习，这个就比较麻烦了
-
-def word2vec(lsls):
+def word2vec(lsls, v_type):
     ls_str=[]
     for s in lsls:
         strs = ' '.join(s) 
         ls_str.append(strs)
     
-    # TF-IDF
-    transfer = TfidfVectorizer() #实例化一个转换器类
+    if v_type == "TFIDF":
+    # TF-IDF(term frequency—inverse document frequency)
+        transfer = TfidfVectorizer() #实例化一个转换器类
+    else:
+        transfer = CountVectorizer()
     data_new = transfer.fit_transform(ls_str) #调用fit_transform()
     #构建成一个二维表：
     df=pd.DataFrame(data_new.toarray(), columns=transfer.get_feature_names_out())
@@ -70,12 +91,13 @@ def word2vec(lsls):
     withWeight = transfer.vocabulary_
     return df, withWeight
 
-def main():
-    file = '完整数据_暴雨_交通.csv'
-    path_file = os.path.join("Data",file)
+def main(options):
+    file = options.file
+    path_file = os.path.join("Data", file)
 
     data = pd.read_csv(path_file)
-    df = data.sample(n=500, replace=False, random_state=1)
+    num = options.num
+    df = data.sample(n=num, replace=False, random_state=1)
     df.reset_index(drop=True, inplace=True)
     tweets = df.loc[:, ['微博正文']]
     tweets.shape
@@ -84,11 +106,14 @@ def main():
     stopword = get_stopword_list('stopwords/hit_stopwords.txt')
     tweets['clean_stopwords'] = tweets['clean_word'].apply(clean_stopword
                                                           ,stopword_list=stopword)  
-    
+    # 向量化
     lsls = tweets['clean_stopwords']
-    word_v, withWeight = word2vec(lsls)
+    v_type = options.vecType
+    word_v, withWeight = word2vec(lsls, v_type)
 
-    topK = 500  # 排名前几的
+    topK = options.topK
+    # topK = 500  # 排名前几的
+
     downK = int(len(withWeight)/4) #排名靠后的删掉
     L = sorted(withWeight.items(), key=lambda item:item[1], reverse=False)
 
@@ -97,9 +122,18 @@ def main():
 
     df2 = word_v.drop(columns=tags_del, axis=1, inplace=False)
     
-    tweets.to_excel(os.path.join("Data", file[:-4]+"_pre_tweets.xlsx"))
-    df2.to_excel(os.path.join("Data",file[:-4]+"_pre_vec.xlsx"))
+    surfix = v_type
+    pre1 = os.path.join("Data", file[:-4]+"_pre_tweets_"+surfix+".xlsx")
+    pre2 = os.path.join("Data",file[:-4]+"_pre_vec_"+surfix+".csv")
+    
+    tweets.to_excel(pre1)
+    df2.to_csv(pre2, index=None)
 
 
 if __name__ == '__main__':
-    main()
+    args = ["-t", 500, "-d", 500, "-f", "完整数据_暴雨_交通.csv", "-n", 500, "-v", "TFIDF"]
+    # args = ["-t", 500, "-d", 500, "-f", "完整数据_暴雨_交通.csv", "-n", 500, "-v", "CountVec"]
+    # args = None
+    options = get_options(args)
+    
+    main(options)

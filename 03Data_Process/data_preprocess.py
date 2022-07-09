@@ -28,7 +28,7 @@ def get_options(args=None):
 
 ### 1 文本去噪
 #去除一些无用的信息；特殊的符号
-def clean_noise(text):
+def clear_noise(text):
     text = text.replace(u'\xa0', u' ')      # 去除 \xa0     不间断空白符 
     text = text.replace(u'\u3000', u' ')    # 去除 \u3000   全角的空白符
     
@@ -102,8 +102,9 @@ def main(options):
     tweets = df.loc[:, ['微博正文']]
     tweets.shape
 
-    tweets['clean_word'] = tweets['微博正文'].apply(clean_noise)
-    stopword = get_stopword_list('../stopwords/hit_stopwords.txt')
+    tweets['clean_word'] = tweets['微博正文'].apply(clear_noise)
+    stopword_file = os.path.join("stopwords", "hit_stopwords.txt")
+    stopword = get_stopword_list(stopword_file)
     tweets['clean_stopwords'] = tweets['clean_word'].apply(clean_stopword
                                                           ,stopword_list=stopword)  
     # 向量化
@@ -123,8 +124,8 @@ def main(options):
     df2 = word_v.drop(columns=tags_del, axis=1, inplace=False)
     
     surfix = vec_type
-    pre1 = os.path.join("../02Data", file[:-4]+"_pre_tweets_"+surfix+".xlsx")
-    pre2 = os.path.join("../02Data",file[:-4]+"_pre_vec_"+surfix+".csv")
+    pre1 = os.path.join("./02Data", file[:-4]+"_pre_tweets_"+surfix+".xlsx")
+    pre2 = os.path.join("./02Data",file[:-4]+"_pre_vec_"+surfix+".csv")
     
     # tweets.to_excel(pre1)
     # df2.to_csv(pre2, index=None)

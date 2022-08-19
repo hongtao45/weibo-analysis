@@ -404,6 +404,8 @@ print(df)
 > [pkuseg：一个多领域中文分词工具包](https://github.com/lancopku/pkuseg-python)
 >
 > [中文句法分析及LTP使用](https://blog.csdn.net/asialee_bird/article/details/102610588) 【基本停止维护了，安装失败，放弃
+>
+> \# stop_postag= ['c', 'd', 'df', 'f', 'm', 'mq', 'ns', 'nt', 'nz', 'o','p','q','r','s',',t','nrfg']
 
 - 功能
 

@@ -347,7 +347,7 @@ print(df)
 
 
 
-# weibo-tweets-analysis【改进
+# weibo-tweets-analysis - Pro
 
 
 
@@ -598,4 +598,10 @@ paddle模式词性和专名类别标签集合如下表，其中词性标签24 �
   - CounterVector
   - BERT【学习ing
   - word2vec【学习ing
+
+
+
+# weibo-tweets-analysis - Pro Max
+
+
 

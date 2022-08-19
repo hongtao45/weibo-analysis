@@ -5,6 +5,7 @@ __pycache__/
 
 # 自定义不上传的文件
 *.zip
+03Data_Process/lstm_model/best_model/*.hdf5
 
 # C extensions
 *.so
